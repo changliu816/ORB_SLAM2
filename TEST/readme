@@ -1,0 +1,10 @@
+#1 Enter into the ORB_SLAM2 folder. In my case: 
+cd /home/chang/slam_build/ORB_SLAM2
+
+#2 Execute the following command
+./Examples/Monocular/mono_euroc Vocabulary/ORBvoc.txt Examples/Monocular/test2.yaml /home/chang/slam_build/ORB_SLAM2/Examples/images /home/chang/slam_build/ORB_SLAM2/Examples/e3.txt
+
+where 
+/test2.yaml  : calibration file
+/images:       folder that contains images
+/e3.txt:       the name of each files or images in /images folder. Typically it means the timestamps of each frame, but in our case, just name of files.
