@@ -1,10 +1,24 @@
-#1 Enter into the ORB_SLAM2 folder. In my case: 
+#1 Extract the frame from video taken by smartphone
+Use extract_frame.m to extract the frame from video
+
+#2 Extract the filename of files in a folder 
+Use extract_filename.m to generate e3.txt(whichever name)
+
+#3 Enter into the ORB_SLAM2 folder. In my case: 
 cd /home/chang/slam_build/ORB_SLAM2
 
-#2 Execute the following command
+#4 Execute the following command
 ./Examples/Monocular/mono_euroc Vocabulary/ORBvoc.txt Examples/Monocular/test2.yaml /home/chang/slam_build/ORB_SLAM2/Examples/images /home/chang/slam_build/ORB_SLAM2/Examples/e3.txt
 
 where 
 /test2.yaml  : calibration file
 /images:       folder that contains images
 /e3.txt:       the name of each files or images in /images folder. Typically it means the timestamps of each frame, but in our case, just name of files.
+
+#5 After program is compleled
+Use trajectory.m to generate the GPS of trajectory.
+1)The scale factor 's' is caculated only based on 1 trial. It's recommended to do scaling again to make sure the accuracy.
+ - Procedues are also shown in green area
+2) Input the GPS of start point at line 41
+3) Input the third options of function flat2lla at line 47 according to real situation.
+3rd option: Angular direction of flat Earth x-axis (degrees clockwise from north), which is the angle in degrees used for converting flat Earth x and y coordinates to North and East coordinates.
