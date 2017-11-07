@@ -10,9 +10,12 @@ fid = fclose(fid);
 tra=data(:,2:4);
 tra(:,3)=-tra(:,3);
 figure
-plot3(tra(:,1),tra(:,2),tra(:,3),'-r');
-figure
-plot(tra(:,3),tra(:,1),'-r');
+subplot 121
+plot3(tra(:,1),tra(:,2),-tra(:,3),'-r');
+title('Local 3D map coordinate')
+grid on
+%figure
+%plot(tra(:,3),tra(:,1),'-r');
 
 
 %%  trajectory scale
@@ -36,7 +39,7 @@ plot(tra(:,3),tra(:,1),'-r');
 
 s=61.7700;
 traj=[tra(:,1),tra(:,3)]*s;
-plot(traj(:,1),traj(:,2),'-r');
+%plot(traj(:,1),traj(:,2),'-r');
 %%
 llo=[40.445398, -79.947072]; %GPS of the star point(the first data of tra)
 traj2=[traj,zeros(length(traj),1)];
@@ -46,5 +49,7 @@ traj2=[traj,zeros(length(traj),1)];
 %to North and East coordinates.
 lla1 = flat2lla(traj2, llo,-5.9598, 0);  
 lla1(:,3)=[];
-figure
+subplot 122
 plot(lla1(:,2),lla1(:,1),'-r');
+title('Real world 2D map coordinate')
+grid on
