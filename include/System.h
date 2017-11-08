@@ -109,6 +109,7 @@ public:
     // TODO: Save/Load functions
     // SaveMap(const string &filename);
     // LoadMap(const string &filename);
+     void SaveMapPoints(const string &filename); // user added
 
 private:
 
