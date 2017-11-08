@@ -382,7 +382,77 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
     f.close();
     cout << endl << "trajectory saved!" << endl;
 }
+// add the function savemappoints here to save the mappoints
+// this might have some problems, just mark here
 
+void System::SaveMapPoints(const string &filename) {
+    cout << endl << "Saving map points to " << filename << " ..." << endl;
+
+    std::vector<MapPoint*> all_points = mpMap->GetAllMapPoints();    
+    int count_good_map_points=0;
+    // Transform all keyframes so that the first keyframe is at the origin.
+    // After a loop closure the first keyframe might not be at the origin.
+    for(size_t i=0, iend=all_points.size(); i<iend;i++)
+    {
+        if (!(all_points[i]->isBad()))
+            count_good_map_points+=1;
+    }
+
+    ofstream f;
+    f.open(filename.c_str());
+    f << fixed;
+    f << "Number of good map points:" << count_good_map_points << "\n";
+    f << "Frame num, point num, Image index, timestamp, feature index, x, y"<<"\n";
+
+    std::vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
+    sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
+    for(size_t i=0, iend=vpKFs.size(); i<iend;i++)
+    {
+        if ((vpKFs[i]->mTimeStamp) > 20170927.141305 || (vpKFs[i]->mTimeStamp) < 20170927.141255)
+            continue;
+	f << "current frame timestamp:"<< vpKFs[i]->mTimeStamp << "\n";
+        cv::Mat t = vpKFs[i]->GetCameraCenter();
+	f <<"frame camera center:" << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)<< "\n";
+        //std::vector<MapPoint*> pMPs = vpKFs[i]->GetMapPointMatches();
+	int j=0;
+        for(auto pMP : vpKFs[i]->GetMapPoints())
+	{
+	    j++;
+	    //MapPoint* pMP=pMPs[j];
+            cv::Mat pos=pMP->GetWorldPos();
+            f << i << " " << j << " " << pos.at<float>(0) << " " << pos.at<float>(1) << " " << pos.at<float>(2) << " " <<"0"<<" ";
+            //now all the observations/measurements
+            std::map<KeyFrame*,size_t> observations=pMP->GetObservations();
+            //count good observations:
+            int num_good_observations=0;
+            for (std::map<KeyFrame*,size_t>::iterator ob_it=observations.begin(); ob_it!=observations.end(); ob_it++)
+            {
+                if (!(*ob_it).first->isBad())
+                    num_good_observations+=1;
+            }
+
+            f << num_good_observations << "\n";
+            for (std::map<KeyFrame*,size_t>::iterator ob_it=observations.begin(); ob_it!=observations.end(); ob_it++)
+            {
+                //skip if the key frame is "bad"
+                if ((*ob_it).first->isBad())
+                    continue;
+                //<Measurement> = <Image index> <Feature Index> <xy>
+                std::vector<cv::KeyPoint> key_points=(*ob_it).first->GetKeyPoints();
+                f << i << " " << j << " " << (*ob_it).first->mnFrameId << " "<< (*ob_it).first->mTimeStamp << " " << (*ob_it).second << " " << 
+                key_points[ob_it->second].pt.x << " " <<
+                key_points[ob_it->second].pt.y << "\n";
+            }
+   
+        } 
+        f << "The above frame has finished processing, waiting for next......" << "\n";
+	f << "\n";
+    }
+    f.close();
+    cout << endl << "Map Points saved!" << endl;
+
+}
+	
 void System::SaveTrajectoryKITTI(const string &filename)
 {
     cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
